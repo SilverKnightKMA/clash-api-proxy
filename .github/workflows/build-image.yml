@@ -43,7 +43,7 @@ jobs:
             # Tạo tag từ ngày giờ hiện tại (YYYYMMDD-HHMMSS)
             #type=raw,value={{date 'YYYYMMDD-HHMMSS'}}
             # Thêm tag latest khi push lên branch chính (mặc định)
-            #type=raw,value=latest,enable={{is_default}}
+            type=raw,value=latest,enable={{is_default_branch}}
             # Tùy chọn: Giữ lại các tag khác nếu cần (branch name, semver tag)
             # type=ref,event=branch # Ví dụ: tạo tag main từ branch main
             # type=ref,event=pr # Tạo tag cho PR
