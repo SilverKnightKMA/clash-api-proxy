@@ -70,12 +70,6 @@ To run this Clash API proxy using Docker Compose, follow these steps:
     docker compose up -d
     ```
 
-    This command will:
-    * Read the configuration from `docker-compose.yml`.
-    * Build the Docker image for the proxy service (if it doesn't exist locally or the `Dockerfile` has changed).
-    * Create and start the `clash-api-proxy` container.
-    * Run the container in detached mode (`-d`), meaning it won't block your terminal.
-
 ### Verification
 
 * Check if the container is running:
@@ -86,7 +80,7 @@ To run this Clash API proxy using Docker Compose, follow these steps:
     ```bash
     docker compose logs -f
     ```
-* By default, the proxy container exposes port `8000` (check `docker-compose.yml` if this differs). You should be able to access the proxy's own endpoints (like `/version` or `/health` as mentioned in the main README) via `http://localhost:8000/version` or `http://localhost:8000/health` (replace `localhost` with your server's IP address if running remotely).
+* By default, the proxy container exposes port `5000` (check `docker-compose.yml`). You should be able to access the proxy's own endpoints (like `/info` or `/update_api`) via `${DOMAIN}/info` or `${DOMAIN}/update_api`.
 
 ### Stopping the Service
 
