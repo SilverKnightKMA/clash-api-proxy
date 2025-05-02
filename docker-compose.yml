@@ -1,0 +1,15 @@
+services:
+  clash-api-proxy:
+    container_name: clash-api-proxy
+    image: ghcr.io/silverknightkma/clash-api-proxy:latest
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    environment:
+      - PORT=$PORT
+      - HOST=$HOST
+      - API_SERVICE_URL=$API_SERVICE_URL
+      - DOMAIN=$DOMAIN
+      - EMAIL=$EMAIL
+      - PASSWORD=$PASSWORD
+      - GAME=$GAME
