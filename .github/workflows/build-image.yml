@@ -41,7 +41,7 @@ jobs:
             # Tạo tag từ commit SHA (short SHA)
             type=sha,format=long
             # Tạo tag từ ngày giờ hiện tại (YYYYMMDD-HHMMSS)
-            #type=raw,value={{date 'YYYYMMDD-HHMMSS'}}
+            type=raw,value={{date 'YYYYMMDD-HHmmss' tz='Asia/Ho_Chi_Minh'}}
             # Thêm tag latest khi push lên branch chính (mặc định)
             type=raw,value=latest,enable={{is_default_branch}}
             # Tùy chọn: Giữ lại các tag khác nếu cần (branch name, semver tag)
