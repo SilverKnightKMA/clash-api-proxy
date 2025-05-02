@@ -6,7 +6,8 @@ on:
       - main # Thay đổi sang branch chính của bạn nếu không phải là main
     tags:
       - 'v*.*.*' # Kích hoạt workflow khi có tag dạng vX.Y.Z được tạo
-
+  workflow_dispatch: # Thêm dòng này để cho phép chạy thủ công
+  
 env:
   REGISTRY: ghcr.io # Hoặc docker.io nếu dùng Docker Hub
   IMAGE_NAME: clash-api-proxy # Tên image của bạn
