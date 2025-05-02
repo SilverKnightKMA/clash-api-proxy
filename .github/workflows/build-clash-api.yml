@@ -20,6 +20,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: clash-api:${GITHUB_REF_NAME}-${GITHUB_SHA::8}, clash-api:latest
+          tags: |
+            clash-api:{{ github.ref_name }}-{{ github.sha | slice(0,8) }}
+            clash-api:latest
           load: true
           push: false
