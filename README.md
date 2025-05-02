@@ -39,8 +39,26 @@ To run this Clash API proxy using Docker Compose, follow these steps:
 
     Now, **edit** the newly created `.env` file using a text editor. You **must** update the following variables according to your Clash API configuration:
 
-    * `CLASH_API_URL`: The full URL of your Clash API endpoint (e.g., `http://127.0.0.1:9090`).
-    * `CLASH_API_SECRET`: The API secret/password you configured in your Clash instance's `config.yaml`. If your Clash instance does not have an API secret set, you may leave this variable empty or remove the line, but verify the project's code or README for confirmation on how it handles missing secrets.
+    * `PORT`: The port number on which the proxy service will listen for incoming HTTP requests.
+        * Example: `PORT=5000`
+
+    * `HOST`: The host or IP address the proxy service will bind to. Use `0.0.0.0` to make the proxy accessible from any interface.
+        * Example: `HOST=0.0.0.0`
+
+    * `API_SERVICE_URL`: Clash of Clan API
+        * Example: `API_SERVICE_URL=https://api.clashofclans.com/v1`
+
+    * `DOMAIN`: Your Domain/IP
+        * Example: `DOMAIN=https://fu.tungvuthanh.com`
+
+    * `EMAIL`: The email address required for authentication with CoC API (`API_SERVICE_URL`).
+        * Example: `EMAIL=your.api.email@example.com`
+
+    * `PASSWORD`: The password associated with the `EMAIL` for authentication with CoC API.
+        * Example: `PASSWORD=your_api_password`
+
+    * `GAME`: An identifier for the game.
+        * Example: `GAME=clashofclans`
 
     Save the changes to the `.env` file.
 
