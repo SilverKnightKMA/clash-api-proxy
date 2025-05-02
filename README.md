@@ -15,13 +15,9 @@ To run this Clash API proxy using Docker Compose, follow these steps:
 
 1.  **Clone the repository:**
 
-    Open your terminal or command prompt and run the following command to download the source code:
-
     ```bash
     git clone https://github.com/SilverKnightKMA/clash-api-proxy
     ```
-
-    Navigate into the project directory:
 
     ```bash
     cd clash-api-proxy
