@@ -25,7 +25,7 @@ To run this Clash API proxy using Docker Compose, follow these steps:
 
 2.  **Configure Environment Variables:**
 
-    The project uses a `.env` file for configuration, particularly to connect to your Clash instance's API. A template is provided as `.env.example`.
+    The project uses a `.env` file for configuration. A template is provided as `.env.example`.
 
     Copy the example file to create your `.env` file:
 
