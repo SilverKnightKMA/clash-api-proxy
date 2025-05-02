@@ -45,7 +45,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
-            type=raw,value=latest,enable={{is_default}}
+            type=raw,value=latest,enable={{github.ref_name == github.event.repository.default_branch}} # Sửa dòng này
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
