@@ -3,14 +3,15 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main # Thay đổi sang branch chính của bạn nếu không phải là main
+      - main # Kích hoạt workflow khi có push lên branch chính của bạn (thường là dev)
     tags:
-      - 'v*.*.*' # Kích hoạt workflow khi có tag dạng vX.Y.Z được tạo
-  workflow_dispatch: # Thêm dòng này để cho phép chạy thủ công
-  
+      - 'v*.*.*' # Kích hoạt workflow khi có tag dạng vX.Y.Z được tạo (thường là stable)
+  release:
+    types: [published] # Kích hoạt workflow khi có release được publish (chắc chắn là stable)
+  workflow_dispatch: # Cho phép chạy workflow thủ công
+
 env:
-  REGISTRY: ghcr.io # Hoặc docker.io nếu dùng Docker Hub
-  IMAGE_NAME: clash-api-proxy # Tên image của bạn
+  REGISTRY: ghcr.io # Hoặc docker.io nếu dùng Docker Hub, hoặc registry khác
 
 jobs:
   build:
@@ -27,29 +28,35 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} # Sử dụng GITHUB_TOKEN cho GHCR
+          username: ${{ github.actor }} # Đối với GHCR, dùng github.actor
+          password: ${{ secrets.GITHUB_TOKEN }} # Đối với GHCR, dùng GITHUB_TOKEN. Đối với Docker Hub, cần tạo secret DOCKERHUB_TOKEN
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }} # Đối với GHCR, định dạng là ghcr.io/owner/repo
+          # Định dạng tên image phụ thuộc vào registry
+          # Đối với GHCR, định dạng là ghcr.io/owner/repo
           # Đối với Docker Hub, định dạng là YOUR_DOCKERHUB_USERNAME/IMAGE_NAME
-          # images: ${{ env.IMAGE_NAME }} 
+          images: |
+            ${{ env.REGISTRY == 'ghcr.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }}
+            ${{ env.REGISTRY != 'ghcr.io' && env.REGISTRY != 'docker.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }} # Custom registry, assumes owner/repo format
+            ${{ env.REGISTRY == 'docker.io' && format('{0}/{1}', github.repository_owner, github.event.repository.name) || '' }} # Docker Hub: owner/imagename
+
           tags: |
-            # Tạo tag từ commit SHA (short SHA)
-            type=sha,format=long
-            # Tạo tag từ ngày giờ hiện tại (YYYYMMDD-HHMMSS)
-            type=raw,value={{date 'YYYYMMDD-HHmmss' tz='Asia/Ho_Chi_Minh'}}
-            # Thêm tag latest khi push lên branch chính (mặc định)
-            type=raw,value=latest,enable={{is_default_branch}}
-            # Tùy chọn: Giữ lại các tag khác nếu cần (branch name, semver tag)
-            # type=ref,event=branch # Ví dụ: tạo tag main từ branch main
-            # type=ref,event=pr # Tạo tag cho PR
-            # type=semver,pattern={{version}} # Tạo tag từ Git tag vX.Y.Z
-            # type=semver,pattern={{major}}.{{minor}}
-            # type=semver,pattern={{major}}
+            # Các tag luôn đi kèm: SHA và Timestamp
+            type=sha,format=long # Tag từ commit SHA dài (ví dụ: abcdef1234567890)
+            type=raw,value={{date 'YYYYMMDD-HHmmss' tz='Asia/Ho_Chi_Minh'}} # Tag theo ngày giờ (ví dụ: 20231027-103000)
+
+            # stable tags: Áp dụng khi có release hoặc push tag vX.Y.Z
+            # Bao gồm: version tag (từ vX.Y.Z), stable, latest
+            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }} # Tag từ Git tag vX.Y.Z (ví dụ: 1.2.3)
+            type=raw,value=stable,enable=${{ github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }} # Tag "stable"
+            type=raw,value=latest,enable=${{ github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }} # Tag "latest" cũng trỏ về stable
+
+            # dev tag: Áp dụng khi có push lên main branch hoặc chạy thủ công
+            type=raw,value=dev,enable=${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }} # Tag "dev"
+
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
