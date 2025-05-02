@@ -80,7 +80,7 @@ To run this Clash API proxy using Docker Compose, follow these steps:
     ```bash
     docker compose logs -f
     ```
-* By default, the proxy container exposes port `5000` (check `docker-compose.yml`). You should be able to access the proxy's own endpoints (like `/info` or `/update_api`) via `${DOMAIN}/info` or `${DOMAIN}/update_api`.
+* By default, the proxy container exposes port `5000` (check `docker-compose.yml`). You should be able to access the proxy via `curl http://localhost:5000/info`.
 
 ### Stopping the Service
 
