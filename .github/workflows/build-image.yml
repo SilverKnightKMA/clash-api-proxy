@@ -3,15 +3,13 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main # Kích hoạt workflow khi có push lên branch chính của bạn (thường là dev)
-    tags:
-      - 'v*.*.*' # Kích hoạt workflow khi có tag dạng vX.Y.Z được tạo (thường là stable)
+      - main
   release:
-    types: [published] # Kích hoạt workflow khi có release được publish (chắc chắn là stable)
-  workflow_dispatch: # Cho phép chạy workflow thủ công
+    types: [published]
+  workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io # Hoặc docker.io nếu dùng Docker Hub, hoặc registry khác
+  REGISTRY: ghcr.io
 
 jobs:
   build:
@@ -28,41 +26,33 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }} # Đối với GHCR, dùng github.actor
-          password: ${{ secrets.GITHUB_TOKEN }} # Đối với GHCR, dùng GITHUB_TOKEN. Đối với Docker Hub, cần tạo secret DOCKERHUB_TOKEN
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # Định dạng tên image phụ thuộc vào registry
-          # Đối với GHCR, định dạng là ghcr.io/owner/repo
-          # Đối với Docker Hub, định dạng là YOUR_DOCKERHUB_USERNAME/IMAGE_NAME
           images: |
             ${{ env.REGISTRY == 'ghcr.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }}
-            ${{ env.REGISTRY != 'ghcr.io' && env.REGISTRY != 'docker.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }} # Custom registry, assumes owner/repo format
-            ${{ env.REGISTRY == 'docker.io' && format('{0}/{1}', github.repository_owner, github.event.repository.name) || '' }} # Docker Hub: owner/imagename
+            ${{ env.REGISTRY != 'ghcr.io' && env.REGISTRY != 'docker.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }}
+            ${{ env.REGISTRY == 'docker.io' && format('{0}/{1}', github.repository_owner, github.event.repository.name) || '' }}
 
           tags: |
-            # Các tag luôn đi kèm: SHA và Timestamp
-            type=sha,format=long # Tag từ commit SHA dài (ví dụ: abcdef1234567890)
-            type=raw,value={{date 'YYYYMMDD-HHmmss' tz='Asia/Ho_Chi_Minh'}} # Tag theo ngày giờ (ví dụ: 20231027-103000)
-
-            # stable tags: Áp dụng khi có release hoặc push tag vX.Y.Z
-            # Bao gồm: version tag (từ vX.Y.Z), stable, latest
-            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }} # Tag từ Git tag vX.Y.Z (ví dụ: 1.2.3)
-            type=raw,value=stable,enable=${{ github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }} # Tag "stable"
-            type=raw,value=latest,enable=${{ github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }} # Tag "latest" cũng trỏ về stable
-
-            # dev tag: Áp dụng khi có push lên main branch hoặc chạy thủ công
-            type=raw,value=dev,enable=${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' }} # Tag "dev"
-
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+            type=raw,value={{date 'YYYYMMDD-HHmmss' tz='Asia/Ho_Chi_Minh'}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: . # Thư mục build context, dấu chấm (.) nghĩa là thư mục gốc của repo
-          push: true # Đặt là true để push image lên registry sau khi build
+          context: .
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
