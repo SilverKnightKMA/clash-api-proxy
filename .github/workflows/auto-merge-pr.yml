@@ -1,0 +1,26 @@
+name: Auto Merge Approved PR
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: '0 0 * * 1' # runs every Monday at 00:00
+  status: {}
+
+jobs:
+  automerge:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.16.4"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_METHOD: "merge"
+          MERGE_LABELS: "automated"
