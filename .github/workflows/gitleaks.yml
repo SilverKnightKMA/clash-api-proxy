@@ -7,8 +7,6 @@ on:
   pull_request:
   push:
   workflow_dispatch:
-  release:
-    types: [published]
   schedule:
     - cron: "0 0 * * *"
     
