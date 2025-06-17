@@ -8,7 +8,7 @@ on:
   release:
     types: [published]
   schedule:
-    - cron: "0 4 * * *" # run once a day at 4 AM
+    - cron: "0 0 * * *"
 jobs:
   scan:
     name: gitleaks
@@ -20,3 +20,4 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_NOTIFY_USER_LIST: @SilverKnightKMA
