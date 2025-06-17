@@ -17,8 +17,8 @@ app.use(morgan('dev'));
 async function generateApiKey() {
     try {
         const { email, password, game } = {
-            email: process.env.EMAIL || "admin@tungvuthanh.com",
-            password: process.env.PASSWORD || "Pa$$w0rd",
+            email: process.env.EMAIL,
+            password: process.env.PASSWORD,
             game: process.env.GAME || 'clashofclans'
         };
 
