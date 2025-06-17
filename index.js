@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || "0.0.0.0";
 const API_SERVICE_URL = process.env.API_SERVICE_URL || "https://api.clashofclans.com/v1";
 const DOMAIN = process.env.DOMAIN || "http://localhost:5000";
-const discord_client_secret = '8dyfuiRyq=vVc3RRr_edRk-fK__JItpZ'
+#const discord_client_secret = '8dyfuiRyq=vVc3RRr_edRk-fK__JItpZ'
 let ApiKey = null;
 
 app.use(morgan('dev'));
