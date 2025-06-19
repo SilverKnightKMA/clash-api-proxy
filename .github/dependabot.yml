@@ -12,7 +12,16 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: daily
+    labels:
+      - "automated"
+      - "dependencies"
+    assignees:
+      - "SilverKnightKMA"
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: daily
     labels:
       - "automated"
       - "dependencies"
