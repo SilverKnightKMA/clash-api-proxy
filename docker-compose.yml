@@ -1,7 +1,7 @@
 services:
   clash-api-proxy:
     container_name: clash-api-proxy
-    image: ghcr.io/silverknightkma/clash-api-proxy:latest
+    image: ghcr.io/silverknightkma/clash-api-proxy:v1.0.5
     ports:
       - "5000:5000"
     restart: unless-stopped
