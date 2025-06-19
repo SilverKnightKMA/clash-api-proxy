@@ -9,7 +9,7 @@ updates:
       - "dependencies"
     assignees:
       - "SilverKnightKMA"
-  - package-ecosystem: "npm"
+  - package-ecosystem: npm
     directory: "/"
     schedule:
       interval: daily
@@ -18,7 +18,16 @@ updates:
       - "dependencies"
     assignees:
       - "SilverKnightKMA"
-  - package-ecosystem: "docker"
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
+    labels:
+      - "automated"
+      - "dependencies"
+    assignees:
+      - "SilverKnightKMA"
+  - package-ecosystem: composer
     directory: "/"
     schedule:
       interval: daily
