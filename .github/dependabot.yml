@@ -27,7 +27,7 @@ updates:
       - "dependencies"
     assignees:
       - "SilverKnightKMA"
-  - package-ecosystem: composer
+  - package-ecosystem: docker-compose	
     directory: "/"
     schedule:
       interval: daily
