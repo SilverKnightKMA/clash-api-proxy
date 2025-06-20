@@ -10,7 +10,6 @@ const HOST = process.env.HOST || "0.0.0.0";
 const API_SERVICE_URL = process.env.API_SERVICE_URL || "https://api.clashofclans.com/v1";
 const DOMAIN = process.env.DOMAIN || "http://localhost:5000";
 let ApiKey = null;
-const discord_client_secret = ENV[‘AUTH_TOKEN’]
 
 app.use(morgan('dev'));
 
