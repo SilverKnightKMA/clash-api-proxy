@@ -127,13 +127,15 @@ const proxyMiddleware = createProxyMiddleware({
     target: API_SERVICE_URL,
     changeOrigin: true,
     pathRewrite: { '^/clash_api': '' },
-    onProxyRes: async (proxyRes, req, res) => {
-        if (proxyRes.statusCode === 403) {
-            const updateSuccess = await updateApiKey();
-        } else {
-            console.log('Proxy request completed');
+    on: {
+        proxyRes: async (proxyRes, req, res) => {
+            if (proxyRes.statusCode === 403) {
+                await updateApiKey();
+            } else {
+                console.log('Proxy request completed');
+            }
         }
-    },
+    }
 });
 
 app.use('/clash_api', clashAPIMiddleware, proxyMiddleware);
