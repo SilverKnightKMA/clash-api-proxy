@@ -96,7 +96,7 @@ async function updateApiKey() {
         if (result.key) {
             ApiKey = result.key;
             // Do not log full API key; log masked value for traceability
-            console.log('API Key updated:', ApiKey ? ApiKey.slice(-4).padStart(ApiKey.length, '*') : '(no key)');
+            console.log('API Key updated successfully.');
             return true;
         }
         console.error('Failed to update API key: No key returned');
