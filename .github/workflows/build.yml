@@ -49,11 +49,14 @@ jobs:
             ${{ env.REGISTRY == 'docker.io' && format('{0}/{1}', github.repository_owner, github.event.repository.name) || '' }}
 
           tags: |
-            type=raw,value=dev,enable=${{ github.event_name == 'push' }}
+            type=raw,value=dev,enable=${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
             type=semver,pattern={{version}},enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=raw,value=v${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
             type=raw,value=${{ github.sha }},enable=true
+            type=raw,value=edge,enable=${{ github.event_name == 'pull_request' }}
+            type=ref,event=branch,enable=${{ !endsWith(github.ref, 'main') }}
+            type=match,pattern=\d.\d.\d$,priority=901
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
