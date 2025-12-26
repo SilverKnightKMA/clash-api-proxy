@@ -5,6 +5,14 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - '*.*.*'
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
 
 env:
   REGISTRY: ghcr.io
@@ -41,11 +49,9 @@ jobs:
             ${{ env.REGISTRY == 'docker.io' && format('{0}/{1}', github.repository_owner, github.event.repository.name) || '' }}
 
           tags: |
-            type=sha
-            type=raw,value={{date 'YYYYMMDD-HHmmss' tz='Asia/Ho_Chi_Minh'}}
-            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+            type=raw,value=dev,enable=${{ github.event_name == 'push' }}
             type=semver,pattern={{version}},enable=${{ github.ref_type == 'tag' }}
-            type=raw,value=dev,enable=${{ github.ref_type == 'branch' || github.event_name == 'workflow_dispatch' }}
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=raw,value=v${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
 
       - name: Build and push Docker image
