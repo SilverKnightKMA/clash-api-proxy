@@ -45,7 +45,7 @@ To run this Clash API proxy using Docker Compose, follow these steps:
         * Example: `API_SERVICE_URL=https://api.clashofclans.com/v1`
 
     * `DOMAIN`: Your Domain/IP
-        * Example: `DOMAIN=https://fu.tungvuthanh.com`
+        * Example: `DOMAIN=https://your.domain`
 
     * `EMAIL`: The email address required for authentication with CoC API (`API_SERVICE_URL`).
         * Example: `EMAIL=your.api.email@example.com`
