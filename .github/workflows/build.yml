@@ -5,6 +5,17 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Manual Tag'
+        required: false
+        default: 'manual'
+        type: string
+      force_build:
+        description: 'Force build image'
+        required: true
+        default: false
+        type: boolean
   push:
     branches:
       - 'main'
@@ -24,10 +35,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.force_build == true }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -47,12 +58,12 @@ jobs:
             ${{ env.REGISTRY == 'ghcr.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }}
             ${{ env.REGISTRY != 'ghcr.io' && env.REGISTRY != 'docker.io' && format('{0}/{1}', env.REGISTRY, github.repository) || '' }}
             ${{ env.REGISTRY == 'docker.io' && format('{0}/{1}', github.repository_owner, github.event.repository.name) || '' }}
-
           tags: |
-            type=raw,value=dev,enable=${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+            type=raw,value=dev,enable=${{ github.event_name == 'push' }}
             type=semver,pattern={{version}},enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=raw,value=v${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
+            type=raw,value=${{ inputs.tag_name }},enable=${{ github.event_name == 'workflow_dispatch' }}
             type=raw,value=${{ github.sha }},enable=true
             type=raw,value=edge,enable=${{ github.event_name == 'pull_request' }}
             type=ref,event=branch,enable=${{ !endsWith(github.ref, 'main') }}
